@@ -9,7 +9,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersService {
 	constructor(private prisma: PrismaService) { }
 
-	// private salt = this.config.get("SALT");
 	private salt = 10;
 
 	async findAll(): Promise<User[]> {
@@ -20,7 +19,7 @@ export class UsersService {
 	}
 
 	async delete(id: string): Promise<User> {
-		if (!await this.findById(id)) {
+		if (!(await this.findById(id))) {
 			throw new NotFoundException('Resource does not exist', {
 				description: `User with ID ${id} does not exist`
 			});
@@ -31,7 +30,7 @@ export class UsersService {
 	}
 
 	async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-		if (!await this.findById(id)) {
+		if (!(await this.findById(id))) {
 			throw new NotFoundException('Resource does not exist', {
 				description: `User with ID ${id} does not exist`
 			});

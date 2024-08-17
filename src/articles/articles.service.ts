@@ -3,14 +3,13 @@ import { PrismaService } from '@src/prisma/prisma/prisma.service';
 import { Prisma, Article } from '@prisma/client';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { FindArticlesDto } from './dto/find-article.dto';
-import { title } from 'process';
-import { contains } from 'class-validator';
 import { UpdateArticleDto } from './dto/update-article.dto';
 
 @Injectable()
 export class ArticlesService {
 	constructor(private prisma: PrismaService) { }
 
+	test = new PrismaService
 	async findByID(id: string): Promise<Article | null> {
 		return this.prisma.article.findFirst({
 			where: { id }
@@ -48,7 +47,6 @@ export class ArticlesService {
 				description: `Article with ID ${id} does not exist`
 			});
 		}
-
 		return this.prisma.article.update({
 			data: updateArticleDto,
 			where: { id }
@@ -61,7 +59,6 @@ export class ArticlesService {
 				description: `Article with ID ${id} does not exist`
 			});
 		}
-
 		return this.prisma.article.delete({
 			where: { id }
 		})
