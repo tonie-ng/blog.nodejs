@@ -14,24 +14,34 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  firstName String
-  lastName  String?
-  userName  String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  articles  Article[]
+  id           String         @id @default(cuid())
+  email        String         @unique
+  firstName    String
+  lastName     String         @default("")
+  userName     String         @unique
+  password     String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  articles     Article[]
+  readArticles ReadArticles[]
 }
 
 model Article {
-  id        String   @id @default(cuid())
-  title     String
-  content   String   @default("")
-  published Boolean? @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  String?
+  id           String         @id @default(cuid())
+  title        String
+  content      String         @default("")
+  published    Boolean?       @default(false)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  author       User           @relation(fields: [authorId], references: [id])
+  authorId     String
+  ReadArticles ReadArticles[]
+}
+
+model ReadArticles {
+  id        String  @id @default(cuid())
+  articleId String
+  article   Article @relation(fields: [articleId], references: [id])
+  authorId  String
+  author    User    @relation(fields: [authorId], references: [id])
 }
