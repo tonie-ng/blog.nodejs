@@ -11,6 +11,7 @@ async function bootstrap() {
 		.setDescription('A backend application for a blog')
 		.setVersion('0.0.1')
 		.addTag('blog')
+		.addBearerAuth()
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('docs', app, document);

@@ -52,3 +52,9 @@ export class AuthGuard implements CanActivate {
 		return type === 'Bearer' ? token : '';
 	}
 }
+
+export class CustomRequest extends Request {
+	user: {
+		sub: string
+	}
+}
