@@ -9,8 +9,6 @@ import * as Joi from 'joi';
 
 @Module({
 	imports: [
-		PrismaModule,
-		UsersModule,
 		ConfigModule.forRoot({
 			isGlobal: true,
 			envFilePath: ['.env'],
@@ -21,6 +19,8 @@ import * as Joi from 'joi';
 				SALT: Joi.number().required(),
 			})
 		}),
+		PrismaModule,
+		UsersModule,
 		ArticlesModule,
 		AuthModule
 	],

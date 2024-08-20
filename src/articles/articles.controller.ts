@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, Req } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { IsPublic } from '@src/auth/auth.decorator';
+import { CustomRequest } from '@src/auth/auth.guard';
 
 
 @ApiTags('articles')
@@ -11,10 +12,6 @@ import { IsPublic } from '@src/auth/auth.decorator';
 @Controller('articles')
 export class ArticlesController {
 	constructor(private readonly articlesService: ArticlesService) { }
-
-	// Here because I'm yet to implement authentication
-	// Ideally this will be extracted from the req object
-	private testUserId = "clzym30kk0000aank5z6yxn98"
 
 	@IsPublic()
 	@Get()
@@ -29,23 +26,24 @@ export class ArticlesController {
 	}
 
 	@Post()
-	createArticle(@Body() createArticleDto: CreateArticleDto) {
-		return this.articlesService.create(createArticleDto, this.testUserId)
+	createArticle(@Body() createArticleDto: CreateArticleDto, @Req() req: CustomRequest) {
+		console.log(req)
+		return this.articlesService.create(createArticleDto, req.user.sub)
 	}
 
 	@Patch(':id/publish')
-	publishArticleDraft(@Param('id') id: string) {
-		return this.articlesService.update(id, { published: true })
+	publishArticleDraft(@Param('id') id: string, @Req() req: CustomRequest) {
+		return this.articlesService.update(id, req.user.sub, { published: true })
 	}
 
 	@Put(':id')
-	updateArticle(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
-		return this.articlesService.update(id, updateArticleDto)
+	updateArticle(@Param('id') id: string,@Req() req: CustomRequest, @Body() updateArticleDto: UpdateArticleDto) {
+		return this.articlesService.update(id, req.user.sub, updateArticleDto)
 	}
 
 	@Delete(':id')
 	@HttpCode(204)
-	deleteArticle(@Param('id') id: string) {
-		return this.articlesService.delete(id)
+	deleteArticle(@Param('id') id: string, @Req() req: CustomRequest) {
+		return this.articlesService.delete(id, req.user.sub)
 	}
 }

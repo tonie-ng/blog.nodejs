@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '@src/prisma/prisma/prisma.service';
 import { User } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -25,22 +25,34 @@ export class UsersService {
 		return this.prisma.user.findUnique({ where: { email } });
 	}
 
-	async delete(id: string): Promise<User> {
-		if (!(await this.findById(id))) {
+	async delete(id: string, userId: string): Promise<User> {
+		const user = await this.findById(id);
+		if (!user) {
 			throw new NotFoundException('Resource does not exist', {
 				description: `User with ID ${id} does not exist`
 			});
+		}
+		if (userId != user.id) {
+			throw new UnauthorizedException('Not enough permission', {
+				description: `User does not belong to current user`
+			})
 		}
 		return this.prisma.user.delete({
 			where: { id }
 		})
 	}
 
-	async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-		if (!(await this.findById(id))) {
+	async update(id: string, userId: string, updateUserDto: UpdateUserDto): Promise<User> {
+		const user = await this.findById(id);
+		if (!user) {
 			throw new NotFoundException('Resource does not exist', {
 				description: `User with ID ${id} does not exist`
 			});
+		}
+		if (userId != user.id) {
+			throw new UnauthorizedException('Not enough permission', {
+				description: `User does not belong to current user`
+			})
 		}
 
 		const { password } = updateUserDto;

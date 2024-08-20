@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '@src/prisma/prisma/prisma.service';
 import { Prisma, Article } from '@prisma/client';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -9,7 +9,6 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 export class ArticlesService {
 	constructor(private prisma: PrismaService) { }
 
-	test = new PrismaService
 	async findByID(id: string): Promise<Article | null> {
 		return this.prisma.article.findFirst({
 			where: { id }
@@ -41,11 +40,18 @@ export class ArticlesService {
 		return this.prisma.article.findMany()
 	}
 
-	async update(id: string, updateArticleDto: UpdateArticleDto): Promise<Article | null> {
-		if (!(await this.findByID(id))) {
+	async update(id: string, userId: string, updateArticleDto: UpdateArticleDto): Promise<Article | null> {
+		const article = await this.findByID(id);
+		if (!article) {
 			throw new NotFoundException('Resource does not exist', {
 				description: `Article with ID ${id} does not exist`
 			});
+		}
+
+		if (userId != article.authorId) {
+			throw new UnauthorizedException('Not enough permission', {
+				description: `Article does not belong to current user`
+			})
 		}
 		return this.prisma.article.update({
 			data: updateArticleDto,
@@ -53,12 +59,20 @@ export class ArticlesService {
 		})
 	}
 
-	async delete(id: string) {
-		if (!(await this.findByID(id))) {
+	async delete(id: string, userId: string) {
+		const article = await this.findByID(id);
+		if (!article) {
 			throw new NotFoundException('Resource does not exist', {
 				description: `Article with ID ${id} does not exist`
 			});
 		}
+
+		if (userId != article.authorId) {
+			throw new UnauthorizedException('Not enough permission', {
+				description: `Article does not belong to current user`
+			})
+		}
+
 		return this.prisma.article.delete({
 			where: { id }
 		})

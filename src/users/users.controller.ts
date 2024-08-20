@@ -33,13 +33,13 @@ export class UsersController {
 	}
 
 	@Put(':id')
-	updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-		return this.usersService.update(id, updateUserDto);
+	updateUser(@Param('id') id: string, @Req() req: CustomRequest, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+		return this.usersService.update(id, req.user.sub, updateUserDto);
 	}
 
 	@Delete(':id')
 	@HttpCode(204)
 	deleteUser(@Param('id') id: string, @Req() req: CustomRequest) {
-		return this.usersService.delete(id)
+		return this.usersService.delete(id, req.user.sub)
 	}
 }
