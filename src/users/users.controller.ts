@@ -1,12 +1,14 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { User } from '@prisma/client';
+import { BookMarkedArticle, User } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IsPublic } from '@src/auth/auth.decorator';
 import { Request } from 'express';
 import { CustomRequest } from '@src/auth/auth.guard';
+import { CreateBookMarkDto } from './dto/create-bookmark.dto';
+import { DeleteBookMarkDto } from './dto/delete-bookmark.dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -41,5 +43,21 @@ export class UsersController {
 	@HttpCode(204)
 	deleteUser(@Param('id') id: string, @Req() req: CustomRequest) {
 		return this.usersService.delete(id, req.user.sub)
+	}
+
+	@Post(':id/bookmarks')
+	createBookmark(@Param('id') id: string, @Body() { postId }: CreateBookMarkDto): Promise<BookMarkedArticle> {
+		return this.usersService.createBookmark(id, postId)
+	}
+
+	@Get(':id/bookmarks')
+	getBookMarks(@Req() req: CustomRequest): Promise<BookMarkedArticle[]> {
+		return this.usersService.getBookmarks(req.user.sub)
+	}
+
+	@Delete(':id/bookmarks')
+	@HttpCode(204)
+	deleteBookmark(@Param('id') id: string, @Body() { bookmarkId }: DeleteBookMarkDto) {
+		return this.usersService.deleteBookmark(id, bookmarkId);
 	}
 }

@@ -27,7 +27,6 @@ export class ArticlesController {
 
 	@Post()
 	createArticle(@Body() createArticleDto: CreateArticleDto, @Req() req: CustomRequest) {
-		console.log(req)
 		return this.articlesService.create(createArticleDto, req.user.sub)
 	}
 

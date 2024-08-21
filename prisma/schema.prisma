@@ -14,31 +14,31 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(cuid())
-  email        String         @unique
+  id           String              @id @default(cuid())
+  email        String              @unique
   firstName    String
-  lastName     String         @default("")
-  userName     String         @unique
+  lastName     String              @default("")
+  userName     String              @unique
   password     String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
   articles     Article[]
-  readArticles ReadArticles[]
+  readArticles BookMarkedArticle[]
 }
 
 model Article {
-  id           String         @id @default(cuid())
-  title        String         @default("")
-  content      String         @default("")
-  published    Boolean?       @default(false)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  author       User           @relation(fields: [authorId], references: [id])
-  authorId     String
-  ReadArticles ReadArticles[]
+  id                String              @id @default(cuid())
+  title             String              @default("")
+  content           String              @default("")
+  published         Boolean?            @default(false)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  author            User                @relation(fields: [authorId], references: [id])
+  authorId          String
+  BookMarkedArticle BookMarkedArticle[]
 }
 
-model ReadArticles {
+model BookMarkedArticle {
   id        String  @id @default(cuid())
   articleId String
   article   Article @relation(fields: [articleId], references: [id])

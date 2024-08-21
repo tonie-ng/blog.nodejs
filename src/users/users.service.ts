@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '@src/prisma/prisma/prisma.service';
-import { User } from '@prisma/client';
+import { User, BookMarkedArticle } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,8 +8,10 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
-	constructor(private prisma: PrismaService, private configService: ConfigService) { }
-
+	constructor(
+		private prisma: PrismaService,
+		private configService: ConfigService,
+	) { }
 
 	private salt = this.configService.get('SALT');
 
@@ -79,7 +81,6 @@ export class UsersService {
 
 	async create(createUserDto: CreateUserDto): Promise<User> {
 		const { email, password, firstName, lastName, userName } = createUserDto;
-
 		const existingUser = await this.findUnique(email, userName);
 		if (existingUser) {
 			const field = existingUser.email === email ? email : userName;
@@ -97,6 +98,55 @@ export class UsersService {
 				lastName,
 				userName
 			}
+		})
+	}
+
+	async createBookmark(userId: string, articleId: string): Promise<BookMarkedArticle> {
+		const user = await this.findById(userId);
+		if (!user) {
+			throw new NotFoundException('Resource does not exist', {
+				description: `User with ID ${userId} does not exist`
+			});
+		}
+		return this.prisma.bookMarkedArticle.create({
+			data: {
+				author: { connect: { id: userId } },
+				article: { connect: { id: articleId } }
+			}
+		})
+	}
+
+	async getBookmarks(userId: string): Promise<BookMarkedArticle[]> {
+		return this.prisma.bookMarkedArticle.findMany({
+			where: { authorId: userId }
+		})
+	}
+
+	async deleteBookmark(userId: string, id: string) {
+		const user = await this.findById(userId);
+		if (!user) {
+			throw new NotFoundException('Resource does not exist', {
+				description: `User with ID ${userId} does not exist`
+			});
+		}
+
+		const article = await this.prisma.bookMarkedArticle.findUnique({
+			where: { id }
+		})
+		if (!article) {
+			throw new NotFoundException('Resource does not exist', {
+				description: `Bookmarked article with ID ${id} does not exist`
+			});
+		}
+
+		if (userId != article.authorId) {
+			throw new UnauthorizedException('Not enough permission', {
+				description: `Article does not belong to current user`
+			})
+		}
+
+		return this.prisma.bookMarkedArticle.delete({
+			where: { id }
 		})
 	}
 }
