@@ -52,6 +52,7 @@ pnpm run start:dev
 
 - Access Swagger Documentation
 Open your browser and navigate to http://localhost:3000/docs to view the API documentation.
+> For a complete list of API endpoints and detailed usage, please refer to the [API Documentation](API_DOCUMENTATION.md).
 
 ## Stay in touch
 - Author - [Tonie Victor]()
