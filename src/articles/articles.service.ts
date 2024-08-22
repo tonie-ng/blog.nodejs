@@ -28,16 +28,29 @@ export class ArticlesService {
 	async findAllFiltered(findArticleDto: FindArticlesDto): Promise<Article[]> {
 		return this.prisma.article.findMany({
 			where: {
-				OR: [
-					{ title: { contains: findArticleDto.searchString } },
-					{ content: { contains: findArticleDto.searchString } }
+				AND: [
+					{ published: true },
+					{
+						OR: [
+							{ title: { contains: findArticleDto.searchString } },
+							{ content: { contains: findArticleDto.searchString } }
+						]
+					}
 				]
 			}
 		})
 	}
 
 	async findAll(): Promise<Article[]> {
-		return this.prisma.article.findMany()
+		return this.prisma.article.findMany({
+			where: { published: true }
+		})
+	}
+
+	async findDrafts(userid: string): Promise<Article[]> {
+		return this.prisma.article.findMany({
+			where: { AND: [{ published: true }, { authorId: userid }] }
+		})
 	}
 
 	async update(id: string, userId: string, updateArticleDto: UpdateArticleDto): Promise<Article | null> {

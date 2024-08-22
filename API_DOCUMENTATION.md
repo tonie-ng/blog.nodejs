@@ -7,6 +7,8 @@
 - **GET** `/users/{id}` - Retrieve a specific user by ID.
 - **PUT** `/users/{id}` - Update a specific user by ID.
 - **DELETE** `/users/{id}` - Delete a specific user by ID.
+- **GET** `/users/{id}/drafts` - Add all user's draft articles.
+- **GET** `/users/{id}/articles` - Add all user' articles.
 - **POST** `/users/{id}/bookmarks` - Add a bookmark for a user.
 - **GET** `/users/{id}/bookmarks` - Retrieve bookmarks for a user.
 - **DELETE** `/users/{id}/bookmarks` - Remove a bookmark for a user.

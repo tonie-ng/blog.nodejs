@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '@src/prisma/prisma/prisma.service';
-import { User, BookMarkedArticle } from '@prisma/client';
+import { User, BookMarkedArticle, Article } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -41,6 +41,31 @@ export class UsersService {
 		}
 		return this.prisma.user.delete({
 			where: { id }
+		})
+	}
+
+	async getDrafts(id: string, userid: string): Promise<Article[]> {
+		if (id != userid) {
+			throw new NotFoundException('Resource does not exist', {
+				description: `User with ID ${id} does not exist`
+			});
+		}
+
+		return this.prisma.article.findMany({
+			where: { AND: [{ published: false }, { authorId: userid }] }
+		})
+	}
+
+	async getArticles(id: string): Promise<Article[]> {
+		const user = await this.findById(id);
+		if (!user) {
+			throw new NotFoundException('Resource does not exist', {
+				description: `User with ID ${id} does not exist`
+			});
+		}
+
+		return this.prisma.article.findMany({
+			where: { AND: [{ published: true }, { authorId: user.id }] }
 		})
 	}
 

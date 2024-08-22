@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { BookMarkedArticle, User } from '@prisma/client';
+import { Article, BookMarkedArticle, User } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IsPublic } from '@src/auth/auth.decorator';
@@ -36,15 +36,27 @@ export class UsersController {
 
 	@Put(':id')
 	async updateUser(@Param('id') id: string, @Req() req: CustomRequest, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-		const r = await req.user
+		const r = await req.user;
 		return this.usersService.update(id, r.sub, updateUserDto);
 	}
 
 	@Delete(':id')
 	@HttpCode(204)
 	async deleteUser(@Param('id') id: string, @Req() req: CustomRequest) {
-		const r = await req.user
+		const r = await req.user;
 		return this.usersService.delete(id, r.sub)
+	}
+
+	@Get(':id/drafts')
+	async getDrafts(@Param('id') id: string, @Req() req: CustomRequest): Promise<Article[]> {
+		const r = await req.user;
+		return this.usersService.getDrafts(id, r.sub);
+	}
+
+	@IsPublic()
+	@Get(':id/articles')
+	getArticles(@Param('id') id: string): Promise<Article[]> {
+		return this.usersService.getArticles(id)
 	}
 
 	@Post(':id/bookmarks')
