@@ -1,20 +1,28 @@
 # Blog Api
 A Node.js API built with NestJS for managing blog posts and user interactions. This project demonstrates practical skills in API design and development.
 
+## Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+
+- **Git**: For cloning the repository.
+- **Node.js and npm**: For managing dependencies and running the application. [Download Node.js](https://nodejs.org/) if you haven’t already.
+- **Docker**(optional): You'd need this to spin up a postgres instance if you want to.
+
 ## Installation
 
-- Clone the repository
+1. Clone the repository
 ```bash
 git clone https://github.com/tonievictor/blog.nodejs.git blog
 cd blog
 ```
 
-- Install Dependencies
+2. Install Dependencies
 ```bash
 pnpm install
 ```
 
-- Configure Environment Variables
+3. Configure Environment Variables
 Create a `.env` file in the root directory and provide the following
 ```bash
 # Provide these if you'd be using docker to spin up a postgres instance
@@ -31,10 +39,11 @@ SALT=
 ```
 > **Note** If you're using docker compose, run `docker compose up` to spin up the database instance
 
-- Generate Database Client
+4. Generate Database Client
 ```bash
 npx prisma generate
 ```
+
 ## Running the app
 - To start the development server, run
 ```bash
