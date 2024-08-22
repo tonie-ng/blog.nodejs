@@ -26,23 +26,27 @@ export class ArticlesController {
 	}
 
 	@Post()
-	createArticle(@Body() createArticleDto: CreateArticleDto, @Req() req: CustomRequest) {
-		return this.articlesService.create(createArticleDto, req.user.sub)
+	async createArticle(@Body() createArticleDto: CreateArticleDto, @Req() req: CustomRequest) {
+		const r = await req.user;
+		return this.articlesService.create(createArticleDto, r.sub)
 	}
 
 	@Patch(':id/publish')
-	publishArticleDraft(@Param('id') id: string, @Req() req: CustomRequest) {
-		return this.articlesService.update(id, req.user.sub, { published: true })
+	async publishArticleDraft(@Param('id') id: string, @Req() req: CustomRequest) {
+		const r = await req.user;
+		return this.articlesService.update(id, r.sub, { published: true })
 	}
 
 	@Put(':id')
-	updateArticle(@Param('id') id: string,@Req() req: CustomRequest, @Body() updateArticleDto: UpdateArticleDto) {
-		return this.articlesService.update(id, req.user.sub, updateArticleDto)
+	async updateArticle(@Param('id') id: string,@Req() req: CustomRequest, @Body() updateArticleDto: UpdateArticleDto) {
+		const r = await req.user;
+		return this.articlesService.update(id, r.sub, updateArticleDto)
 	}
 
 	@Delete(':id')
 	@HttpCode(204)
-	deleteArticle(@Param('id') id: string, @Req() req: CustomRequest) {
-		return this.articlesService.delete(id, req.user.sub)
+	async deleteArticle(@Param('id') id: string, @Req() req: CustomRequest) {
+		const r = await req.user;
+		return this.articlesService.delete(id, r.sub)
 	}
 }

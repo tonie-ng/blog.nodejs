@@ -51,6 +51,7 @@ export class UsersService {
 				description: `User with ID ${id} does not exist`
 			});
 		}
+
 		if (userId != user.id) {
 			throw new UnauthorizedException('Not enough permission', {
 				description: `User does not belong to current user`

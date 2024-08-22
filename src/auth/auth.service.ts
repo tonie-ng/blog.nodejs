@@ -52,6 +52,7 @@ export class AuthService {
 		}
 		const expiry = payload.exp - payload.iat;
 		const test = await this.cacheManager.set(payload.sub, payload, expiry);
+		console.log(test)
 		return { message: "Logged out successfully" }
 	}
 }

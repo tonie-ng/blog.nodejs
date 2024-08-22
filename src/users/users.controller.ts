@@ -35,14 +35,16 @@ export class UsersController {
 	}
 
 	@Put(':id')
-	updateUser(@Param('id') id: string, @Req() req: CustomRequest, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-		return this.usersService.update(id, req.user.sub, updateUserDto);
+	async updateUser(@Param('id') id: string, @Req() req: CustomRequest, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+		const r = await req.user
+		return this.usersService.update(id, r.sub, updateUserDto);
 	}
 
 	@Delete(':id')
 	@HttpCode(204)
-	deleteUser(@Param('id') id: string, @Req() req: CustomRequest) {
-		return this.usersService.delete(id, req.user.sub)
+	async deleteUser(@Param('id') id: string, @Req() req: CustomRequest) {
+		const r = await req.user
+		return this.usersService.delete(id, r.sub)
 	}
 
 	@Post(':id/bookmarks')
@@ -51,8 +53,9 @@ export class UsersController {
 	}
 
 	@Get(':id/bookmarks')
-	getBookMarks(@Req() req: CustomRequest): Promise<BookMarkedArticle[]> {
-		return this.usersService.getBookmarks(req.user.sub)
+	async getBookMarks(@Req() req: CustomRequest): Promise<BookMarkedArticle[]> {
+		const r = await req.user
+		return this.usersService.getBookmarks(r.sub)
 	}
 
 	@Delete(':id/bookmarks')

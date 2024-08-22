@@ -14,7 +14,6 @@ export class AuthGuard implements CanActivate {
 		private jwtService: JwtService,
 		private reflector: Reflector,
 		private configService: ConfigService,
-
 		@Inject(CACHE_MANAGER) private cacheManager: Cache
 	) { }
 
@@ -37,7 +36,6 @@ export class AuthGuard implements CanActivate {
 			});
 		}
 		const blacklisted = await this.cacheManager.get(token);
-		console.log("blacklisted:" ,blacklisted)
 		if (blacklisted) {
 			throw new UnauthorizedException('Invalid Jwt token');
 		}
